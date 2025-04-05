@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wasil Don</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background-color: yellow;
+    }
+    table { margin: 20px auto; border-collapse: collapse; }
+    td {
+      width: 60px; height: 60px;
+      font-size: 30px; text-align: center;
+      border: 2px solid black; cursor: pointer;
+      transition: background 0.5s;
+    }
+    .title {
+      font-size: 70px;
+      font-weight: bold;
+      transition: color 1s;
+    }
+    .status-container {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover { background-color: darkgreen; }
+  </style>
+</head>
+<body>
+  <h1 id="title" class="title">Wasil Don</h1>
+
+  <div class="status-container">
+    <h2 id="status">Player X's Turn</h2>
+  </div>
+
+  <table>
+    <tr><td onclick="play(this)"></td><td onclick="play(this)"></td><td onclick="play(this)"></td></tr>
+    <tr><td onclick="play(this)"></td><td onclick="play(this)"></td><td onclick="play(this)"></td></tr>
+    <tr><td onclick="play(this)"></td><td onclick="play(this)"></td><td onclick="play(this)"></td></tr>
+  </table>
+
+  <button onclick="restartGame()">Restart Game</button>
+
+  <audio id="tapSound">
+    <source src="https://www.fesliyanstudios.com/play-mp3/4380" type="audio/mp3">
+  </audio>
+
+  <script>
+    let current = "X";
+    const cells = document.querySelectorAll("td");
+    const tapSound = document.getElementById("tapSound");
+
+    function play(cell) {
+      if (cell.innerHTML === "") {
+        cell.innerHTML = current;
+        tapSound.play();
+
+        if (checkWin()) {
+          document.getElementById("status").innerText = "Player " + current + " Wins!";
+          disableAll();
+        } else if ([...cells].every(c => c.innerHTML !== "")) {
+          document.getElementById("status").innerText = "It's a Draw!";
+        } else {
+          current = current === "X" ? "O" : "X";
+          document.getElementById("status").innerText = "Player " + current + "'s Turn";
+        }
+      }
+    }
+
+    function checkWin() {
+      const wins = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return wins.some(indices => {
+        return cells[indices[0]].innerHTML !== "" &&
+               cells[indices[0]].innerHTML === cells[indices[1]].innerHTML &&
+               cells[indices[1]].innerHTML === cells[indices[2]].innerHTML;
+      });
+    }
+
+    function disableAll() {
+      cells.forEach(cell => cell.onclick = null);
+    }
+
+    function restartGame() {
+      cells.forEach(cell => {
+        cell.innerHTML = "";
+        cell.style.backgroundColor = "";
+        cell.onclick = function() { play(this); };
+      });
+      current = "X";
+      document.getElementById("status").innerText = "Player X's Turn";
+    }
+
+    function waveEffect(index = 0) {
+      if (index >= cells.length) return;
+      cells[index].style.backgroundColor = "red";
+      setTimeout(() => {
+        cells[index].style.backgroundColor = "blue";
+        waveEffect(index + 1);
+      }, 100);
+    }
+
+    setInterval(() => waveEffect(), 1000);
+
+    function changeTitleColor() {
+      const colors = ["red", "blue", "green", "purple", "orange"];
+      document.getElementById("title").style.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    setInterval(changeTitleColor, 1000);
+  </script>
+</body>
+</html>
+<audio id="tapSound">
+  <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mp3">
+</audio>
